@@ -1,5 +1,8 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
 import javax.swing.JPanel;
 
 public class Main extends JPanel {
@@ -12,11 +15,27 @@ public class Main extends JPanel {
 	private final static int HEIGHT_OFFSET = 40;
 	private final static int WIDTH_OFFSET = 17;
 	
-	Graph graph = new Graph("Time", "Position", WIDTH - WIDTH_OFFSET, HEIGHT - HEIGHT_OFFSET);
+	private String[] labels = {"Position", "Velocity"};
+	
+	Graph graph = new Graph("Time", labels, WIDTH - WIDTH_OFFSET, HEIGHT - HEIGHT_OFFSET);
 
 	public static void main(String[] args) {
 		Window frame = new Window(NAME, WIDTH, HEIGHT);
-		frame.add(new Main());
+		Main panel = new Main();
+		frame.add(panel);
+	}
+	
+	public Main() {
+		this.addComponentListener(new ResizeListener());
+		
+		graph.displayGrid(false);
+		
+		for (float i = 0; i < 7; i++) {
+			graph.addData(0, new Vector2D(i, i*i));
+		}
+		for (float i = 0; i < Math.PI * 2; i+= Math.PI / 12) {
+			graph.addData(1, new Vector2D(i, (float)(20*Math.sin(i))));
+		}
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -26,6 +45,12 @@ public class Main extends JPanel {
 		graph.draw(g);
 		
 		repaint();
+	}
+	
+	class ResizeListener extends ComponentAdapter {
+        public void componentResized(ComponentEvent e) {
+            graph.resize(e.getComponent().getSize().width - WIDTH_OFFSET, e.getComponent().getSize().height);
+        }
 	}
 
 }

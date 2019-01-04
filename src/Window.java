@@ -9,7 +9,7 @@ public class Window extends JFrame {
 		setSize(width, height);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		setResizable(false);
+		setResizable(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	

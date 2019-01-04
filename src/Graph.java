@@ -18,22 +18,24 @@ public class Graph {
 	private float[] yLabels = new float[yNumOfLines];
 	private boolean displayGrid = false;
 	
+	private int radius = 10;
+	
 	private String title;
 	private Font normalFont = new Font(Font.MONOSPACED, Font.PLAIN, 25);
 	private ArrayList<Vector2D> dataPoints = new ArrayList<Vector2D>();
 	
 	public Graph(String xAxisLabel, String yAxisLabel, int width, int height) {
 		title = yAxisLabel + " vs. " + xAxisLabel;
-		titleY = (int)(CHAR_HEIGHT * 1.5);
+		titleY = (int)(-height + CHAR_HEIGHT * 1.5);
 		titleX = width / 2 - (title.length() * CHAR_WIDTH) / 2;
 		this.width = width - CHAR_WIDTH * 1; // with minus 2 chars is for asthetics
 		this.height = height;
 		xScale = (int) ((this.width - xBuffer) / (xNumOfLines-1));
-		yScale = (int) ((this.height - yBuffer - titleY) / (yNumOfLines-1));
+		yScale = (int) ((-titleY - yBuffer) / (yNumOfLines-1));
 		
 		// Temp array data
-		for (int i = 0; i < 21; i++) {
-			addData(new Vector2D(i * 0.25f, i));
+		for (float i = 0; i < 2 * Math.PI; i += Math.PI / 6) {
+			addData(new Vector2D(i, (float)(Math.sin(i))));
 		}
 	}
 	
@@ -75,6 +77,9 @@ public class Graph {
 	}
 	
 	public void draw(Graphics g) {
+		// Moves origin to bottom right
+		g.translate(0, height);
+		
 		// Draw Title
 		g.setFont(normalFont);
 		g.drawString(title, titleX, titleY);
@@ -83,38 +88,59 @@ public class Graph {
 		drawScale(g);
 		
 		// Draw Axes
-		g.drawLine(xBuffer, titleY, xBuffer, height - yBuffer); // Vertical
-		g.drawLine(xBuffer, height - yBuffer, width, height - yBuffer); // Horizontal
+		g.drawLine(xBuffer, titleY, xBuffer, -yBuffer); // Vertical
+		g.drawLine(xBuffer, -yBuffer, width, -yBuffer); // Horizontal
 		
 		// Draw Line
 		drawLine(g);
 	}
 	
 	public void drawLine(Graphics g) {
-		for (int i = 1; i < dataPoints.size(); i++) {
-			dataPoints.get(i);
-			g.fillOval(x, y, 2, 2);
+		g.setColor(Color.BLUE);
+		
+		int prevX = 0, prevY = 0;
+		for (int i = 0; i < dataPoints.size(); i++) {
+			Vector2D pt = dataPoints.get(i);
+			
+			float barSpreadX = maxX - minX;
+			float barWidth = width - xBuffer;
+			int x = (int) ((pt.X() / barSpreadX) * barWidth) + xBuffer;
+			
+			float barSpreadY = maxY - minY;
+			float barHeight = -titleY - yBuffer;
+			int y = (int) -((pt.Y() / barSpreadY) * barHeight) - yBuffer;
+			
+			g.fillOval(x - radius / 2, y - radius / 2, radius, radius);
+			
+			if (i > 0) {
+				g.drawLine(x, y, prevX, prevY);
+			}
+			
+			prevX = x;
+			prevY = y;
 		}
 	}
 	
 	public void drawScale(Graphics g) {
+		g.setColor(Color.BLACK);
 		for (int yLines = 0; yLines < yNumOfLines; yLines++) { // Vertical
-			// Vertical is minus since up is positive
-			
 			if (displayGrid) {
 				g.setColor(Color.GRAY);
-				g.drawLine(xBuffer, height - yBuffer - yLines * yScale, width, height - yBuffer - yLines * yScale);
+				g.drawLine(xBuffer, -yBuffer - yLines * yScale, width, -yBuffer - yLines * yScale);
 				g.setColor(Color.BLACK);
 			}
 			
-			g.drawLine(xBuffer - CHAR_WIDTH / 2, height - yBuffer - yLines * yScale, xBuffer + CHAR_WIDTH / 2, height - yBuffer - yLines * yScale);
+			g.drawLine(xBuffer - CHAR_WIDTH / 2, -yBuffer - yLines * yScale, xBuffer + CHAR_WIDTH / 2, -yBuffer - yLines * yScale);
 			
 			// Labels
 			String label = Float.toString(yLabels[yLines]).substring(0, 3);
-			if (label.endsWith(".")) {
+			if (label.endsWith("0")) {
 				label = label.substring(0, 2);
 			}
-			g.drawString(label, CHAR_WIDTH / 2, height - yBuffer - yLines * yScale + CHAR_HEIGHT / 2);
+			if (label.endsWith(".")) {
+				label = label.substring(0, label.length() - 1);
+			}
+			g.drawString(label, CHAR_WIDTH / 2, -yBuffer - yLines * yScale + CHAR_HEIGHT / 2);
 		}
 		for (int xLines = 0; xLines < xNumOfLines; xLines++) { // Horizontal
 			if (displayGrid) {
@@ -123,14 +149,17 @@ public class Graph {
 				g.setColor(Color.BLACK);
 			}
 			
-			g.drawLine(xBuffer + xLines * xScale, height - yBuffer - CHAR_HEIGHT / 2, xBuffer + xLines * xScale, height - yBuffer + CHAR_HEIGHT / 2);
+			g.drawLine(xBuffer + xLines * xScale, -yBuffer - CHAR_HEIGHT / 2, xBuffer + xLines * xScale, -yBuffer + CHAR_HEIGHT / 2);
 			
 			// Labels
 			String label = Float.toString(xLabels[xLines]).substring(0, 3);
-			if (label.endsWith(".")) {
+			if (label.endsWith("0")) {
 				label = label.substring(0, 2);
 			}
-			g.drawString(label, xBuffer + xLines * xScale - (CHAR_WIDTH * label.length()) / 2, height - CHAR_HEIGHT / 2);
+			if (label.endsWith(".")) {
+				label = label.substring(0, label.length() - 1);
+			}
+			g.drawString(label, xBuffer + xLines * xScale - (CHAR_WIDTH * label.length()) / 2, -CHAR_HEIGHT / 2);
 		}
 	}
 

@@ -262,6 +262,10 @@ public class Graph {
 		this.displayGrid = displayGrid;
 	}
 	
+	public boolean isDisplayingGrid() {
+		return displayGrid;
+	}
+	
     private Color randomColor() {
         Random random = new Random();
         int r = random.nextInt(255);

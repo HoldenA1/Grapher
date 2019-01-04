@@ -14,8 +14,8 @@ public class Graph {
 	private float minX, maxX, maxY, minY;
 	private int xScale, yScale; // Distance between lines
 	private int xNumOfLines = 7, yNumOfLines = 6;
-	private int[] xLabels = {0,5,10,15,20,25,30};//new int[xNumOfLines];
-	private int[] yLabels = {0,1,2,3,4,5};//new int[yNumOfLines];
+	private float[] xLabels = new float[xNumOfLines];
+	private float[] yLabels = new float[yNumOfLines];
 	private boolean displayGrid = false;
 	
 	private String title;
@@ -26,10 +26,15 @@ public class Graph {
 		title = yAxisLabel + " vs. " + xAxisLabel;
 		titleY = (int)(CHAR_HEIGHT * 1.5);
 		titleX = width / 2 - (title.length() * CHAR_WIDTH) / 2;
-		this.width = width - CHAR_WIDTH * 2; // with minus 2 chars is for asthetics
+		this.width = width - CHAR_WIDTH * 1; // with minus 2 chars is for asthetics
 		this.height = height;
 		xScale = (int) ((this.width - xBuffer) / (xNumOfLines-1));
 		yScale = (int) ((this.height - yBuffer - titleY) / (yNumOfLines-1));
+		
+		// Temp array data
+		for (int i = 0; i < 21; i++) {
+			addData(new Vector2D(i * 0.25f, i));
+		}
 	}
 	
 	public void addData(Vector2D dataPoint) {
@@ -51,14 +56,22 @@ public class Graph {
 	}
 	
 	public void updateScale() {
+		float stepX = (maxX - minX) / (xNumOfLines - 1);
+		float stepY = (maxY - minY) / (yNumOfLines - 1);
 		
+		for (int i = 0; i < xNumOfLines; i++) {
+			xLabels[i] = minX + stepX * i;
+		}
+		for (int i = 0; i < yNumOfLines; i++) {
+			yLabels[i] = minY + stepY * i;
+		}
 		
-		if (xScale < CHAR_WIDTH * 5) {
-			xScale = (int) ((this.width - xBuffer) / (xNumOfLines-1));
-		}
-		if (yScale < CHAR_HEIGHT * 2) {
-			yScale = (int) ((this.height - yBuffer - titleY) / (yNumOfLines-1));
-		}
+//		if (xScale < CHAR_WIDTH * 5) {
+//			xScale = (int) ((this.width - xBuffer) / (xNumOfLines-1));
+//		}
+//		if (yScale < CHAR_HEIGHT * 2) {
+//			yScale = (int) ((this.height - yBuffer - titleY) / (yNumOfLines-1));
+//		}
 	}
 	
 	public void draw(Graphics g) {
@@ -74,6 +87,14 @@ public class Graph {
 		g.drawLine(xBuffer, height - yBuffer, width, height - yBuffer); // Horizontal
 		
 		// Draw Line
+		drawLine(g);
+	}
+	
+	public void drawLine(Graphics g) {
+		for (int i = 1; i < dataPoints.size(); i++) {
+			dataPoints.get(i);
+			g.fillOval(x, y, 2, 2);
+		}
 	}
 	
 	public void drawScale(Graphics g) {
@@ -89,7 +110,10 @@ public class Graph {
 			g.drawLine(xBuffer - CHAR_WIDTH / 2, height - yBuffer - yLines * yScale, xBuffer + CHAR_WIDTH / 2, height - yBuffer - yLines * yScale);
 			
 			// Labels
-			String label = Integer.toString(yLabels[yLines]);
+			String label = Float.toString(yLabels[yLines]).substring(0, 3);
+			if (label.endsWith(".")) {
+				label = label.substring(0, 2);
+			}
 			g.drawString(label, CHAR_WIDTH / 2, height - yBuffer - yLines * yScale + CHAR_HEIGHT / 2);
 		}
 		for (int xLines = 0; xLines < xNumOfLines; xLines++) { // Horizontal
@@ -102,7 +126,10 @@ public class Graph {
 			g.drawLine(xBuffer + xLines * xScale, height - yBuffer - CHAR_HEIGHT / 2, xBuffer + xLines * xScale, height - yBuffer + CHAR_HEIGHT / 2);
 			
 			// Labels
-			String label = Integer.toString(xLabels[xLines]);
+			String label = Float.toString(xLabels[xLines]).substring(0, 3);
+			if (label.endsWith(".")) {
+				label = label.substring(0, 2);
+			}
 			g.drawString(label, xBuffer + xLines * xScale - (CHAR_WIDTH * label.length()) / 2, height - CHAR_HEIGHT / 2);
 		}
 	}

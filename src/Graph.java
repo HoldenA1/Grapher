@@ -7,7 +7,7 @@ import java.util.Random;
 public class Graph {
 	private final int CHAR_WIDTH = 15, CHAR_HEIGHT = 18;
 	private int width, height, titleX, titleY;
-	private int xBuffer = CHAR_WIDTH * 2; // will change depending on number of chars displayed
+	private int xBuffer = CHAR_WIDTH * 2;
 	private int yBuffer = CHAR_HEIGHT * 2; // 0.5 * CHAR_HEIGHT for the line and 1.5 * CHAR_HEIGHT for the char
 	
 	private float minX, maxX, maxY, minY;
@@ -26,16 +26,7 @@ public class Graph {
 	private ArrayList<Color> lineColors;
 	
 	public Graph(String xAxisLabel, String yAxisLabel, int width, int height) {
-		title = yAxisLabel + " vs. " + xAxisLabel;
-		this.xAxisLabel = xAxisLabel;
-		labels = new String[1];
-		labels[0] = yAxisLabel;
-		dataPoints = new ArrayList<ArrayList<Vector2D>>();
-		dataPoints.add(new ArrayList<Vector2D>());
-		lineColors = new ArrayList<Color>();
-		lineColors.add(Color.BLUE);
-		
-		resize(width, height);
+		this(xAxisLabel, stringToArray(yAxisLabel), width, height);
 	}
 	
 	public Graph(String xAxisLabel, String[] labels, int width, int height) {
@@ -56,6 +47,19 @@ public class Graph {
 		resize(width, height);
 	}
 	
+	private static String[] stringToArray(String s) {
+		String[] array = {s};
+		return array;
+	}
+	
+	/**
+	 * False by default
+	 */
+	public Graph displayGrid(boolean displayGrid) {
+		this.displayGrid = displayGrid;
+		return this;
+	}
+	
 	public void resize(int width, int height) {
 		titleY = (int)(-height + CHAR_HEIGHT * 1.5);
 		titleX = width / 2 - (title.length() * CHAR_WIDTH) / 2;
@@ -72,21 +76,7 @@ public class Graph {
 	}
 	
 	public void addData(Vector2D dataPoint) {
-		dataPoints.get(0).add(dataPoint);
-		
-		if (dataPoint.X() > maxX) {
-			maxX = dataPoint.X();
-		} else if (dataPoint.X() < minX) {
-			minX = dataPoint.X();
-		}
-		
-		if (dataPoint.Y() > maxY) {
-			maxY = dataPoint.Y();
-		} else if (dataPoint.Y() < minY) {
-			minY = dataPoint.Y();
-		}
-		
-		createLabels();
+		addData(0, dataPoint);
 	}
 	
 	public void addData(int line, Vector2D dataPoint) {
@@ -258,19 +248,11 @@ public class Graph {
 		}
 	}
 	
-	public void displayGrid(boolean displayGrid) {
-		this.displayGrid = displayGrid;
-	}
-	
-	public boolean isDisplayingGrid() {
-		return displayGrid;
-	}
-	
     private Color randomColor() {
         Random random = new Random();
-        int r = random.nextInt(255);
-        int g = random.nextInt(255);
-        int b = random.nextInt(255);
+        int r = random.nextInt(155);
+        int g = random.nextInt(155);
+        int b = random.nextInt(155);
         return new Color(r, g, b);
     }
 

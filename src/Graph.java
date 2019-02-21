@@ -3,10 +3,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
+import helper.Vector2D;
 
 public class Graph {
 	private final int CHAR_WIDTH = 15, CHAR_HEIGHT = 18;
-	private int width, height, titleX, titleY;
+	private int width, height, titleX, titleY, graphHeight;
 	private int xBuffer = CHAR_WIDTH * 2;
 	private int yBuffer = CHAR_HEIGHT * 2; // 0.5 * CHAR_HEIGHT for the line and 1.5 * CHAR_HEIGHT for the char
 	
@@ -52,6 +53,14 @@ public class Graph {
 		return array;
 	}
 	
+	private Color randomColor() {
+        Random random = new Random();
+        int r = random.nextInt(155);
+	    int g = random.nextInt(155);
+        int b = random.nextInt(155);
+        return new Color(r, g, b);
+    }
+	
 	/**
 	 * False by default
 	 */
@@ -62,15 +71,18 @@ public class Graph {
 	
 	public void resize(int width, int height) {
 		titleY = (int)(-height + CHAR_HEIGHT * 1.5);
+		graphHeight = (int)(titleY + CHAR_HEIGHT * 0.5);
 		titleX = width / 2 - (title.length() * CHAR_WIDTH) / 2;
-		this.width = width - CHAR_WIDTH * 1; // with minus 2 chars is for asthetics
+		this.width = width - CHAR_WIDTH * 1;
 		this.height = height;
 		xNumOfLines = width / 100;
 		yNumOfLines = height / 70;
+		if (xNumOfLines < 2) xNumOfLines = 2;
+		if (yNumOfLines < 2) yNumOfLines = 2;
 		xLabels = new float[xNumOfLines];
 		yLabels = new float[yNumOfLines];
 		xScale = (int) ((this.width - xBuffer) / (xNumOfLines-1));
-		yScale = (int) ((-titleY - yBuffer) / (yNumOfLines-1));
+		yScale = (int) ((-graphHeight - yBuffer) / (yNumOfLines-1));
 		
 		createLabels();
 	}
@@ -79,6 +91,9 @@ public class Graph {
 		addData(0, dataPoint);
 	}
 	
+	/**
+	 * use ONLY if your graph has multiple lines
+	 */
 	public void addData(int line, Vector2D dataPoint) {
 		dataPoints.get(line).add(dataPoint);
 		
@@ -146,9 +161,9 @@ public class Graph {
 		g.translate(0, height);
 		
 		// Calculates the proper origin
-		float barHeight = -titleY - yBuffer;
+		float barHeight = -graphHeight - yBuffer;
 		float barSpreadY = maxY - minY;
-		int originY = (int) (-(barSpreadY - maxY) / barSpreadY * barHeight) - yBuffer;
+		int originY = (int) (minY / barSpreadY * barHeight) - yBuffer;
 
 		float barWidth = width - xBuffer;
 		float barSpreadX = maxX - minX;
@@ -161,7 +176,7 @@ public class Graph {
 		drawScale(g, originX, originY);
 		
 		// Draw Axes
-		g.drawLine(originX, titleY, originX, -yBuffer); // Vertical
+		g.drawLine(originX, graphHeight, originX, -yBuffer); // Vertical
 		g.drawLine(xBuffer, originY, width, originY); // Horizontal
 		
 		// Draw Line
@@ -202,7 +217,7 @@ public class Graph {
 			int x = (int) ((pt.X() / barSpreadX) * barWidth) + originX;
 			
 			float barSpreadY = maxY - minY;
-			float barHeight = -titleY - yBuffer;
+			float barHeight = -graphHeight - yBuffer;
 			int y = (int) -((pt.Y() / barSpreadY) * barHeight) + originY;
 			
 			g.fillOval(x - radius / 2, y - radius / 2, radius, radius);
@@ -236,7 +251,7 @@ public class Graph {
 		for (int xLines = 0; xLines < xNumOfLines; xLines++) { // Horizontal
 			if (displayGrid) {
 				g.setColor(Color.GRAY);
-				g.drawLine(xBuffer + xLines * xScale, titleY, xBuffer + xLines * xScale, -yBuffer);
+				g.drawLine(xBuffer + xLines * xScale, graphHeight, xBuffer + xLines * xScale, -yBuffer);
 				g.setColor(Color.BLACK);
 			}
 			
@@ -248,12 +263,4 @@ public class Graph {
 		}
 	}
 	
-    private Color randomColor() {
-        Random random = new Random();
-        int r = random.nextInt(155);
-        int g = random.nextInt(155);
-        int b = random.nextInt(155);
-        return new Color(r, g, b);
-    }
-
 }

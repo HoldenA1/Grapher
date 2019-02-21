@@ -5,6 +5,9 @@ import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
 
+import helper.Vector2D;
+import helper.Window;
+
 public class Main extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final static String NAME = "Grapher";
@@ -16,10 +19,8 @@ public class Main extends JPanel {
 	private final static int WIDTH_OFFSET = 17;
 	
 	private String[] labels = {"Position", "Velocity"};
-	String label = "Hello";
 	
-//	Graph graph = new Graph("Time", labels, WIDTH - WIDTH_OFFSET, HEIGHT - HEIGHT_OFFSET);
-	Graph graph = new Graph("Time", label, WIDTH - WIDTH_OFFSET, HEIGHT - HEIGHT_OFFSET);
+	Graph graph = new Graph("Time", labels, WIDTH - WIDTH_OFFSET, HEIGHT - HEIGHT_OFFSET);
 
 	public static void main(String[] args) {
 		Window frame = new Window(NAME, WIDTH, HEIGHT);
@@ -32,9 +33,9 @@ public class Main extends JPanel {
 		
 		graph.displayGrid(false);
 		
-//		for (float i = 0; i < 7; i++) {
-//			graph.addData(0, new Vector2D(i, i*i));
-//		}
+		for (float i = 0; i < 7; i++) {
+			graph.addData(1, new Vector2D(i, i*i));
+		}
 		for (float i = 0; i < Math.PI * 2; i+= Math.PI / 12) {
 			graph.addData(new Vector2D(i, (float)(20*Math.sin(i))));
 		}

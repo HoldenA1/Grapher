@@ -5,6 +5,9 @@ import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
 
+import helper.Vector2D;
+import helper.Window;
+
 public class Main extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final static String NAME = "Grapher";
@@ -31,10 +34,10 @@ public class Main extends JPanel {
 		graph.displayGrid(false);
 		
 		for (float i = 0; i < 7; i++) {
-			graph.addData(0, new Vector2D(i, i*i));
+			graph.addData(1, new Vector2D(i, i*i));
 		}
 		for (float i = 0; i < Math.PI * 2; i+= Math.PI / 12) {
-			graph.addData(1, new Vector2D(i, (float)(20*Math.sin(i))));
+			graph.addData(new Vector2D(i, (float)(20*Math.sin(i))));
 		}
 	}
 	

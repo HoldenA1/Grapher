@@ -2,6 +2,6 @@
 <!-- Configuration of the Ant build system to generate a Jar file --> 
 <project name="Grapher" default="CreateJar">
   <target name="CreateJar" description="Create Jar file">
-        <jar jarfile="jars/Grapher.jar" basedir="." includes="Graph.class" />
+        <jar jarfile="jar/Grapher.jar" basedir="." includes="Graph.class" />
   </target>
 </project>

@@ -6,6 +6,8 @@ import java.util.Random;
 import helper.Vector2D;
 
 public class Graph {
+	private final int GRAPHER_VERSION = 1;
+	
 	private final int CHAR_WIDTH = 15, CHAR_HEIGHT = 18;
 	private int width, height, titleX, titleY, graphHeight;
 	private int xBuffer = CHAR_WIDTH * 2;
@@ -46,6 +48,10 @@ public class Graph {
 		}
 		
 		resize(width, height);
+	}
+	
+	public int getVersion() {
+		return GRAPHER_VERSION;
 	}
 	
 	private static String[] stringToArray(String s) {
@@ -157,10 +163,10 @@ public class Graph {
 	}
 	
 	public void draw(Graphics g) {
-		// Moves origin to bottom right
+		// Translates origin to bottom right
 		g.translate(0, height);
 		
-		// Calculates the proper origin
+		// Finds the graph origin
 		float barHeight = -graphHeight - yBuffer;
 		float barSpreadY = maxY - minY;
 		int originY = (int) (minY / barSpreadY * barHeight) - yBuffer;

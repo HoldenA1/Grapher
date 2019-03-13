@@ -23,6 +23,7 @@ public class ExampleCode extends JPanel {
 
 	public static void main(String[] args) {
 		Window frame = new Window("Graphing Sample", WIDTH, HEIGHT);
+		frame.setResizable(true);
 		ExampleCode panel = new ExampleCode();
 		frame.add(panel);
 	}
@@ -30,7 +31,7 @@ public class ExampleCode extends JPanel {
 	public ExampleCode() {
 		this.addComponentListener(new ResizeListener());
 		
-		graph.displayGrid(false);
+		graph.displayGrid(true);
 		
 		for (float i = 0; i < 7; i++) {
 			graph.addData(1, new Vector2f(i, i*i));

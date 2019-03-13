@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <!-- Configuration of the Ant build system to generate a Jar file --> 
 <project name="Grapher-lib" default="CreateJar">
+	<mkdir dir="lib"/>
 	<get 
 	   src="https://github.com/HoldenA1/GUI-lib/blob/master/jar/GUI-lib.jar?raw=true" 
 	   dest="lib">

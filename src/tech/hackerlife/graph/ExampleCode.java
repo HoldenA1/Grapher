@@ -7,9 +7,9 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 import tech.hackerlife.graph.Graph;
 import tech.hackerlife.graph.helper.Vector2D;
-import tech.hackerlife.graph.helper.Window;
+import tech.hackerlife.gui.Window;
 
-public class Main extends JPanel {
+public class ExampleCode extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final static int WIDTH = 640;
 	private final static int HEIGHT = 480;
@@ -23,11 +23,11 @@ public class Main extends JPanel {
 
 	public static void main(String[] args) {
 		Window frame = new Window("Graphing Sample", WIDTH, HEIGHT);
-		Main panel = new Main();
+		ExampleCode panel = new ExampleCode();
 		frame.add(panel);
 	}
 	
-	public Main() {
+	public ExampleCode() {
 		this.addComponentListener(new ResizeListener());
 		
 		graph.displayGrid(false);

@@ -1,7 +1,15 @@
 <?xml version="1.0" ?>
 <!-- Configuration of the Ant build system to generate a Jar file --> 
 <project name="Grapher-lib" default="CreateJar">
-  <target name="CreateJar" description="Create Jar file">
-        <jar jarfile="jar/Grapher-lib.jar" basedir="bin" includes="tech/hackerlife/graph/Graph.class" />
-  </target>
+	<get 
+	   src="https://github.com/HoldenA1/GUI-lib/blob/master/jar/GUI-lib.jar?raw=true" 
+	   dest="lib">
+	</get>
+	<target name="CreateJar" description="Create Jar file">
+        <jar 
+        	jarfile="jar/Grapher-lib.jar" 
+        	basedir="bin" 
+        	includes="tech/hackerlife/graph/Graph.class"
+        />
+	</target>
 </project>

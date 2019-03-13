@@ -6,8 +6,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 import tech.hackerlife.graph.Graph;
-import tech.hackerlife.graph.helper.Vector2D;
 import tech.hackerlife.gui.Window;
+import tech.hackerlife.math.Vector2f;
 
 public class ExampleCode extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -33,10 +33,10 @@ public class ExampleCode extends JPanel {
 		graph.displayGrid(false);
 		
 		for (float i = 0; i < 7; i++) {
-			graph.addData(1, new Vector2D(i, i*i));
+			graph.addData(1, new Vector2f(i, i*i));
 		}
 		for (float i = 0; i < Math.PI * 2; i+= Math.PI / 12) {
-			graph.addData(new Vector2D(i, (float)(20*Math.sin(i))));
+			graph.addData(new Vector2f(i, (float)(20*Math.sin(i))));
 		}
 	}
 	

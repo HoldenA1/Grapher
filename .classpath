@@ -8,5 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/GUI-lib.jar"/>
 	<classpathentry kind="lib" path="lib"/>
+	<classpathentry kind="lib" path="lib/Math-lib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

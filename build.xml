@@ -5,6 +5,10 @@
 	   src="https://github.com/HoldenA1/GUI-lib/blob/master/jar/GUI-lib.jar?raw=true" 
 	   dest="lib">
 	</get>
+	<get 
+		   src="https://github.com/HoldenA1/Math-lib/blob/master/jar/Math-lib.jar?raw=true" 
+		   dest="lib">
+	</get>
 	<target name="CreateJar" description="Create Jar file">
         <jar 
         	jarfile="jar/Grapher-lib.jar" 

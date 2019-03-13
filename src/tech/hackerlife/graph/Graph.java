@@ -5,8 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
-
-import tech.hackerlife.graph.helper.Vector2D;
+import tech.hackerlife.math.Vector2f;
 
 public class Graph {
 	private final int GRAPHER_VERSION = 1;
@@ -28,7 +27,7 @@ public class Graph {
 	private String title, xAxisLabel;
 	private String[] labels;
 	private Font normalFont = new Font(Font.MONOSPACED, Font.PLAIN, 25);
-	private ArrayList<ArrayList<Vector2D>> dataPoints;
+	private ArrayList<ArrayList<Vector2f>> dataPoints;
 	private ArrayList<Color> lineColors;
 	
 	public Graph(String xAxisLabel, String yAxisLabel, int width, int height) {
@@ -43,10 +42,10 @@ public class Graph {
 		title += xAxisLabel;
 		this.xAxisLabel = xAxisLabel;
 		this.labels = labels;
-		dataPoints = new ArrayList<ArrayList<Vector2D>>();
+		dataPoints = new ArrayList<ArrayList<Vector2f>>();
 		lineColors = new ArrayList<Color>();
 		for (int i = 0; i < labels.length; i++) {
-			dataPoints.add(new ArrayList<Vector2D>());
+			dataPoints.add(new ArrayList<Vector2f>());
 			lineColors.add(randomColor());
 		}
 		
@@ -96,14 +95,14 @@ public class Graph {
 		createLabels();
 	}
 	
-	public void addData(Vector2D dataPoint) {
+	public void addData(Vector2f dataPoint) {
 		addData(0, dataPoint);
 	}
 	
 	/**
 	 * use ONLY if your graph has multiple lines
 	 */
-	public void addData(int line, Vector2D dataPoint) {
+	public void addData(int line, Vector2f dataPoint) {
 		dataPoints.get(line).add(dataPoint);
 		
 		if (dataPoint.X() > maxX) {
@@ -219,7 +218,7 @@ public class Graph {
 		
 		int prevX = 0, prevY = 0;
 		for (int i = 0; i < dataPoints.get(lineNumber).size(); i++) {
-			Vector2D pt = dataPoints.get(lineNumber).get(i);
+			Vector2f pt = dataPoints.get(lineNumber).get(i);
 			
 			float barSpreadX = maxX - minX;
 			float barWidth = width - xBuffer;

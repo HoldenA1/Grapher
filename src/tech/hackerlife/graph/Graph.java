@@ -1,9 +1,12 @@
+package tech.hackerlife.graph;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
-import helper.Vector2D;
+
+import tech.hackerlife.graph.helper.Vector2D;
 
 public class Graph {
 	private final int GRAPHER_VERSION = 1;

@@ -1,4 +1,5 @@
-package helper;
+package tech.hackerlife.graph.helper;
+
 import javax.swing.JFrame;
 
 public class Window extends JFrame {

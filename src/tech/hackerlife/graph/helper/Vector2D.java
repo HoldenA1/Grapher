@@ -1,4 +1,5 @@
-package helper;
+package tech.hackerlife.graph.helper;
+
 import java.awt.Color;
 import java.awt.Graphics;
 

@@ -209,19 +209,25 @@ public class Graph {
 		float barSpreadX = maxX - minX;
 		int originX = (int) ((barSpreadX - maxX) / barSpreadX * barWidth) + xBuffer;
 		
+		boolean hasData = yValues.size() > 0;
+		
 		// Draw Title
 		drawTitle(g);
 		
 		// Draw scale and grid
-		drawScale(g, originX, originY);
+		if (hasData) {
+			drawScale(g, originX, originY);
+		}
 		
 		// Draw Axes
 		g.drawLine(originX, graphHeight, originX, -yBuffer); // Vertical
 		g.drawLine(xBuffer, originY, width, originY); // Horizontal
 		
 		// Draw Line
-		for (int i = 0; i < yValues.get(0).length; i++) {
-			drawLine(g, i, originX, originY);
+		if (hasData) {
+			for (int i = 0; i < yValues.get(0).length; i++) {
+				drawLine(g, i, originX, originY);
+			}
 		}
 		
 		try {

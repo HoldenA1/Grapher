@@ -3,13 +3,15 @@ package tech.hackerlife.graph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import tech.hackerlife.math.Vector2f;
 
 public class Graph {
-	private final int GRAPHER_VERSION = 1;
-	
 	private final int CHAR_WIDTH = 15, CHAR_HEIGHT = 18;
 	private int width, height, titleX, titleY, graphHeight;
 	private int xBuffer = CHAR_WIDTH * 2;
@@ -27,14 +29,51 @@ public class Graph {
 	private String title, xAxisLabel;
 	private String[] labels;
 	private Font normalFont = new Font(Font.MONOSPACED, Font.PLAIN, 25);
-	private ArrayList<ArrayList<Vector2f>> dataPoints;
-	private ArrayList<Color> lineColors;
+	private ArrayList<float[]> yValues;
+	private ArrayList<Float> xValues;
+	private Color[] lineColors;
 	
 	public Graph(String xAxisLabel, String yAxisLabel, int width, int height) {
-		this(xAxisLabel, stringToArray(yAxisLabel), width, height);
+		graphInitializer(xAxisLabel, stringToArray(yAxisLabel), width, height);
 	}
 	
 	public Graph(String xAxisLabel, String[] labels, int width, int height) {
+		graphInitializer(xAxisLabel, labels, width, height);
+	}
+	
+	public Graph(String filename, int width, int height) {
+		try {
+			BufferedReader input = new BufferedReader(new FileReader(filename));
+			
+			// Labels
+			String[] temp = input.readLine().split("\t");
+			String _xAxisLabel = temp[0];
+			String [] _labels = new String[temp.length-1];
+			for (int i = 1; i < temp.length; i++) {
+				_labels[i-1] = temp[i];
+			}
+			
+			// Make Graph
+			graphInitializer(_xAxisLabel, _labels, width, height);
+			
+			// Data
+			String data = input.readLine();
+			while (!(data == null)) {
+				String[] values = data.split("\t");
+				float[] yValues = new float[values.length-1];
+				for (int i = 1; i < values.length; i++) {
+					yValues[i-1] = Float.parseFloat(values[i]);
+				}
+				this.addData(Float.parseFloat(values[0]), yValues);
+				data = input.readLine();
+			}
+			input.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void graphInitializer(String xAxisLabel, String[] labels, int width, int height) {
 		title = "";
 		for (String label: labels) {
 			title += label + " vs. ";
@@ -42,18 +81,14 @@ public class Graph {
 		title += xAxisLabel;
 		this.xAxisLabel = xAxisLabel;
 		this.labels = labels;
-		dataPoints = new ArrayList<ArrayList<Vector2f>>();
-		lineColors = new ArrayList<Color>();
+		xValues = new ArrayList<>();
+		yValues = new ArrayList<>();
+		lineColors = new Color[labels.length];
 		for (int i = 0; i < labels.length; i++) {
-			dataPoints.add(new ArrayList<Vector2f>());
-			lineColors.add(randomColor());
+			lineColors[i] = randomColor();
 		}
 		
 		resize(width, height);
-	}
-	
-	public int getVersion() {
-		return GRAPHER_VERSION;
 	}
 	
 	private static String[] stringToArray(String s) {
@@ -95,26 +130,23 @@ public class Graph {
 		createLabels();
 	}
 	
-	public void addData(Vector2f dataPoint) {
-		addData(0, dataPoint);
+	public void addData(float x, float y) {
+		float[] yValue = {y};
+		addData(x, yValue);
 	}
 	
 	/**
 	 * use ONLY if your graph has multiple lines
 	 */
-	public void addData(int line, Vector2f dataPoint) {
-		dataPoints.get(line).add(dataPoint);
+	public void addData(float x, float[] y) {		
+		xValues.add(x);
+		yValues.add(y);
 		
-		if (dataPoint.X() > maxX) {
-			maxX = dataPoint.X();
-		} else if (dataPoint.X() < minX) {
-			minX = dataPoint.X();
-		}
-		
-		if (dataPoint.Y() > maxY) {
-			maxY = dataPoint.Y();
-		} else if (dataPoint.Y() < minY) {
-			minY = dataPoint.Y();
+		maxX = Math.max(x, maxX);
+		minX = Math.min(x, minX);
+		for (float yValue: y) {
+			maxY = Math.max(yValue, maxY);
+			minY = Math.min(yValue, minY);
 		}
 		
 		createLabels();
@@ -188,7 +220,7 @@ public class Graph {
 		g.drawLine(xBuffer, originY, width, originY); // Horizontal
 		
 		// Draw Line
-		for (int i = 0; i < dataPoints.size(); i++) {
+		for (int i = 0; i < yValues.get(0).length; i++) {
 			drawLine(g, i, originX, originY);
 		}
 		
@@ -202,8 +234,8 @@ public class Graph {
 	private void drawTitle(Graphics g) {
 		g.setFont(normalFont);
 		String pastTitle = "";
-		for (int i = 0; i < lineColors.size(); i++) {
-			g.setColor(lineColors.get(i));
+		for (int i = 0; i < lineColors.length; i++) {
+			g.setColor(lineColors[i]);
 			g.drawString(labels[i], titleX + pastTitle.length() * CHAR_WIDTH, titleY);
 			pastTitle += labels[i];
 			g.setColor(Color.BLACK);
@@ -214,19 +246,20 @@ public class Graph {
 	}
 	
 	private void drawLine(Graphics g, int lineNumber, int originX, int originY) {
-		g.setColor(lineColors.get(lineNumber));
+		g.setColor(lineColors[lineNumber]);
 		
 		int prevX = 0, prevY = 0;
-		for (int i = 0; i < dataPoints.get(lineNumber).size(); i++) {
-			Vector2f pt = dataPoints.get(lineNumber).get(i);
+		for (int i = 0; i < xValues.size(); i++) {
+			float ptX = xValues.get(i);
+			float ptY = yValues.get(i)[lineNumber];
 			
 			float barSpreadX = maxX - minX;
 			float barWidth = width - xBuffer;
-			int x = (int) ((pt.X() / barSpreadX) * barWidth) + originX;
+			int x = (int) ((ptX / barSpreadX) * barWidth) + originX;
 			
 			float barSpreadY = maxY - minY;
 			float barHeight = -graphHeight - yBuffer;
-			int y = (int) -((pt.Y() / barSpreadY) * barHeight) + originY;
+			int y = (int) -((ptY / barSpreadY) * barHeight) + originY;
 			
 			g.fillOval(x - radius / 2, y - radius / 2, radius, radius);
 			
@@ -269,6 +302,40 @@ public class Graph {
 			String label = trimLabel(Float.toString(xLabels[xLines]));
 			g.drawString(label, xBuffer + xLines * xScale - (CHAR_WIDTH * label.length()) / 2, -CHAR_HEIGHT / 2);
 		}
+	}
+	
+	public void saveData() {
+		try {
+			BufferedWriter output = new BufferedWriter(new FileWriter(title, false));
+			output.append(xAxisLabel);
+			for (String l: labels) {
+				output.append("\t");
+				output.append(l);
+			}
+			for (int i = 0; i < xValues.size(); i++) {
+				output.append("\n");
+				output.append(xValues.get(i).toString());
+				for (Float y: yValues.get(i)) {
+					output.append("\t");
+					output.append(y.toString());
+				}
+			}
+			output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
 	}
 	
 }

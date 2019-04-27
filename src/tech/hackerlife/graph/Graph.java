@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.JPanel;
+
 public class Graph {
 	private final int CHAR_WIDTH = 15, CHAR_HEIGHT = 18;
 	private int width, height, titleX, titleY, graphHeight;
@@ -33,8 +35,11 @@ public class Graph {
 	private ArrayList<Float> xValues;
 	private Color[] lineColors;
 	
+	private JPanel panel;
+	
 	public Graph(String xAxisLabel, String yAxisLabel, int width, int height) {
-		graphInitializer(xAxisLabel, stringToArray(yAxisLabel), width, height);
+		String[] array = {yAxisLabel};
+		graphInitializer(xAxisLabel, array, width, height);
 	}
 	
 	public Graph(String xAxisLabel, String[] labels, int width, int height) {
@@ -91,11 +96,6 @@ public class Graph {
 		resize(width, height);
 	}
 	
-	private static String[] stringToArray(String s) {
-		String[] array = {s};
-		return array;
-	}
-	
 	private Color randomColor() {
         Random random = new Random();
         int r = random.nextInt(155);
@@ -150,6 +150,9 @@ public class Graph {
 		}
 		
 		createLabels();
+		if (!(panel == null)) {
+			panel.repaint();
+		}
 	}
 	
 	private void createLabels() {
@@ -196,7 +199,12 @@ public class Graph {
 		return label;
 	}
 	
-	public void draw(Graphics g) {
+	public void draw(Graphics g, JPanel panel) {
+		// Stores the panel object so it can update every time new data is added
+		if (this.panel == null) {
+			this.panel = panel;
+		}
+		
 		// Translates origin to bottom right
 		g.translate(0, height);
 		

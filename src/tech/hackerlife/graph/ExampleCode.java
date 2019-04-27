@@ -11,11 +11,10 @@ public class ExampleCode {
 		GraphWindow createGraph = new GraphWindow(g);
 		g.displayGrid(true);
 		
-		
-//		for (float i = 0; i < Math.PI * 2; i+= Math.PI / 12) {
-//			float[] y = {i*i, (float)(20*Math.sin(i))};
-//			g.addData(i, y);
-//		}
+		for (float i = 0; i < Math.PI * 2; i+= Math.PI / 12) {
+			float[] y = {i*i, (float)(20*Math.sin(i))};
+			g.addData(i, y);
+		}
 		
 		g.saveData();
 	}

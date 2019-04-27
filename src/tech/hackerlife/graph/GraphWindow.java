@@ -38,9 +38,7 @@ public class GraphWindow extends JPanel {
 		super.paintComponent(g);
 		this.setBackground(Color.LIGHT_GRAY);
 		
-		graph.draw(g);
-		
-		repaint();
+		graph.draw(g, this);
 	}
 	
 	// This makes the graph auto-resize with the frame

@@ -96,6 +96,15 @@ public class Graph {
 		resize(width, height);
 	}
 	
+	public void reset() {
+		xValues = new ArrayList<>();
+		yValues = new ArrayList<>();
+
+		if (!(panel == null)) {
+			panel.repaint();
+		}		
+	}
+	
 	private Color randomColor() {
         Random random = new Random();
         int r = random.nextInt(155);
